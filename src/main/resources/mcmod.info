@@ -1,0 +1,17 @@
+[
+{
+  "modid": "pfaeffsmod",
+  "name": "Pfaeff's Mod",
+  "description": "Pfaeff's mod adds 3 new blocks to the game. The Allocator, Light Sensor and Jump Pad. Originally by Pfaeff, ported by Vazkii",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "logoFile": "",
+  "url": "http://www.vazkii.us",
+  "updateUrl": "",
+  "authorList": ["Pfaeff", "Vazkii"],
+  "credits": "",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
