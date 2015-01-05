@@ -1,18 +1,27 @@
-package net.minecraft.src;
+package vazkii.pfaeff.block;
 
-import java.util.Random;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import vazkii.pfaeff.tile.TileEntityLightSensor;
 
 public class BlockLightSensor extends BlockContainer {
 	
-    	private Icon[] iconArray = new Icon[2];	
+    	private IIcon[] iconArray = new IIcon[2];	
 
-	    public BlockLightSensor(int id) {
-	        super(id, Material.wood);
+	    public BlockLightSensor() {
+	        super(Material.wood);
 	        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.375F, 1.0F);
 	        this.setCreativeTab(CreativeTabs.tabRedstone);
+	        setBlockName("lightSensor");
 	    }
 	    
-	    public void registerIcons(IconRegister par1IconRegister) {
+	    public void registerIcons(IIconRegister par1IconRegister) {
 	        this.iconArray[0] = par1IconRegister.registerIcon("lightsensor_top");
 	        this.iconArray[1] = par1IconRegister.registerIcon("daylightDetector_side");
 	    }	    
@@ -43,11 +52,11 @@ public class BlockLightSensor extends BlockContainer {
 	        return true;
 	    }
 	    
-	    public TileEntity createNewTileEntity(World par1World) {
+	    public TileEntity createNewTileEntity(World par1World, int meta) {
 	        return new TileEntityLightSensor();
 	    }
 
-	    public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+	    public IIcon getBlockTextureFromSideAndMetadata(int par1, int par2) {
 	        return par1 == 1 ? this.iconArray[0] : this.iconArray[1];
 	    }
 }

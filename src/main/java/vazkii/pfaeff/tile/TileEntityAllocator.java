@@ -1,4 +1,11 @@
-package net.minecraft.src;
+package vazkii.pfaeff.tile;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityAllocator extends TileEntity implements IInventory {
 
@@ -48,7 +55,7 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "Allocator";
 	}
 
@@ -59,7 +66,7 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        if(worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
+        if(worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
         	return false;
         }
         return entityplayer.getDistanceSq((double)xCoord + 0.5d, (double)yCoord + 0.5d, (double)zCoord + 0.5d) <= 64d;
@@ -68,11 +75,11 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		NBTTagList items = nbttagcompound.getTagList("Items");
+		NBTTagList items = nbttagcompound.getTagList("Items", 10);
 		if (items.tagCount() == 0) {
 			return;
 		}
-		NBTTagCompound item = (NBTTagCompound)items.tagAt(0); // TODO: is it always at 0 ?
+		NBTTagCompound item = (NBTTagCompound) items.getCompoundTagAt(0); // TODO: is it always at 0 ?
 		int slot = item.getByte("Slot") & 0xff;
 		if (slot == 0) {
 			allocatorFilterItem = ItemStack.loadItemStackFromNBT(item);
@@ -104,20 +111,18 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 	private ItemStack allocatorFilterItem;
 
 	@Override
-	public void openChest() {}
-
-	@Override
-	public void closeChest() {}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int var1, ItemStack var2) {
-		// TODO Auto-generated method stub
-		return false;
+	public void openInventory() { }
+
+	@Override
+	public void closeInventory() { }
+
+	@Override
+	public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
+		return true;
 	}
 }

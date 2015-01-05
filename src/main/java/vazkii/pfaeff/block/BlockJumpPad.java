@@ -1,17 +1,25 @@
-package net.minecraft.src;
+package vazkii.pfaeff.block;
 
-import java.util.Random;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 
 public class BlockJumpPad extends Block {
 	
-	protected BlockJumpPad(int i) {
-		super(i, Material.ground);
+	public BlockJumpPad() {
+		super(Material.ground);
 				
 		// 1/4 height
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.25F, 1.0F);
 		
 		this.setCreativeTab(CreativeTabs.tabTransport);
+		setBlockName("jumpPad");
 	}
 	
 	/*
@@ -27,7 +35,7 @@ public class BlockJumpPad extends Block {
      */
 	@Override
     public boolean canPlaceBlockAt(World world, int i, int j, int k) {
-    	return world.isBlockOpaqueCube(i, j - 1, k);
+    	return world.isSideSolid(i, j - 1, k, ForgeDirection.UP);
     }    
     
     /*

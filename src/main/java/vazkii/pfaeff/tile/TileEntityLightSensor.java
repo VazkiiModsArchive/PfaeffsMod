@@ -1,4 +1,8 @@
-package net.minecraft.src;
+package vazkii.pfaeff.tile;
+
+import net.minecraft.tileentity.TileEntity;
+import vazkii.pfaeff.block.BlockLightSensor;
+
 
 public class TileEntityLightSensor extends TileEntity {
 	@Override

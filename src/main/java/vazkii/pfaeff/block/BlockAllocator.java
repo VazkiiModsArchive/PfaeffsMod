@@ -1,28 +1,64 @@
-package net.minecraft.src;
+package vazkii.pfaeff.block;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockJukebox;
+import net.minecraft.block.BlockJukebox.TileEntityJukebox;
+import net.minecraft.block.BlockSourceImpl;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
+import net.minecraft.dispenser.IBehaviorDispenseItem;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.item.ItemRecord;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Facing;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import vazkii.pfaeff.PfaeffsMod;
+import vazkii.pfaeff.tile.TileEntityAllocator;
+
 
 public class BlockAllocator extends BlockContainer {
-	private final IBehaviorDispenseItem dispenseBehaviour = new BehaviourDispenseItemStack();
+	
+	private final IBehaviorDispenseItem dispenseBehaviour = new BehaviorDefaultDispenseItem();
 	/**
 	 * Constructor
 	 * 
 	 */
-	protected BlockAllocator(int i, boolean allowFiltering, boolean subItemFiltering, boolean newTextures) {
-		super(i, Material.rock);
+	public BlockAllocator(boolean allowFiltering, boolean subItemFiltering, boolean newTextures) {
+		super(Material.rock);
 		
 		this.allowFiltering = allowFiltering;
 		this.subItemFiltering = subItemFiltering;
 		this.newTextures = newTextures;
 		
 		this.setCreativeTab(CreativeTabs.tabRedstone);
+		setBlockName("allocator");
 	}
 	
 	@Override
-    public void registerIcons(IconRegister iconRegister) {
+    public void registerBlockIcons(IIconRegister iconRegister) {
         this.blockIcon = iconRegister.registerIcon("pfaeff_side");
         iconFront = iconRegister.registerIcon("allocator_front");
         iconBack = iconRegister.registerIcon("allocator_back");
@@ -30,24 +66,6 @@ public class BlockAllocator extends BlockContainer {
         iconRight = iconRegister.registerIcon("allocator_sider");
         iconTopBottom = iconRegister.registerIcon("pfaeff_topbottom");        
     }	
-	
-    /**
-     * Returns the opposite side to i
-     * 
-     * @param i
-     * @return
-     */
-    private int getOpposite(int i) {
-    	switch(i) {
-	    	case 0: return 1;
-	    	case 1: return 0;
-	    	case 2: return 3;
-	    	case 3: return 2;
-	    	case 4: return 5;
-	    	case 5: return 4;
-    	}
-    	return 0;
-    }
     
     /**
      * Returns orientation along the x-axis (-1, 0, 1)
@@ -80,17 +98,17 @@ public class BlockAllocator extends BlockContainer {
     }      	
 	
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World var1, int meta) {
 		return new TileEntityAllocator();
 	}	
 	
 	@Override
-	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
-		TileEntityAllocator allocator = (TileEntityAllocator) world.getBlockTileEntity(i, j, k);
+	public void breakBlock(World world, int i, int j, int k, Block block, int meta) {
+		TileEntityAllocator allocator = (TileEntityAllocator) world.getTileEntity(i, j, k);
 		if (allocator != null) {
 			ItemStack itemStack = allocator.getStackInSlot(0);
 			if (itemStack != null) {
-				EntityItem entityItem = new EntityItem(world, i, j, k, new ItemStack(itemStack.itemID, 1, itemStack.getItemDamage()));
+				EntityItem entityItem = new EntityItem(world, i, j, k, new ItemStack(itemStack.getItem(), 1, itemStack.getItemDamage()));
 
 				if (itemStack.hasTagCompound()) {
 					entityItem.getEntityItem().setTagCompound((NBTTagCompound) itemStack.getTagCompound().copy());
@@ -104,7 +122,7 @@ public class BlockAllocator extends BlockContainer {
 			}
 		}		
 		
-		super.breakBlock(world, i, j, k, par5, par6);
+		super.breakBlock(world, i, j, k, block, meta);
 	}
 
 	@Override
@@ -125,25 +143,25 @@ public class BlockAllocator extends BlockContainer {
 
 	private void setAllocatorDefaultDirection(World world, int i, int j, int k) {
 		if (!world.isRemote) {
-			int front = world.getBlockId(i, j, k - 1);
-			int back = world.getBlockId(i, j, k + 1);
-			int left = world.getBlockId(i - 1, j, k);
-			int right = world.getBlockId(i + 1, j, k);
+			Block front = world.getBlock(i, j, k - 1);
+			Block back = world.getBlock(i, j, k + 1);
+			Block left = world.getBlock(i - 1, j, k);
+			Block right = world.getBlock(i + 1, j, k);
 			byte val = 3;
 
-			if (Block.opaqueCubeLookup[front] && !Block.opaqueCubeLookup[back]) {
+			if (front.isOpaqueCube() && !back.isOpaqueCube()) {
 				val = 3;
 			}
 
-			if (Block.opaqueCubeLookup[back] && !Block.opaqueCubeLookup[front]) {
+			if (back.isOpaqueCube() && !front.isOpaqueCube()) {
 				val = 2;
 			}
 
-			if (Block.opaqueCubeLookup[left] && !Block.opaqueCubeLookup[right]) {
+			if (left.isOpaqueCube() && !right.isOpaqueCube()) {
 				val = 5;
 			}
 
-			if (Block.opaqueCubeLookup[right] && !Block.opaqueCubeLookup[left]) {
+			if (right.isOpaqueCube() && !left.isOpaqueCube()) {
 				val = 4;
 			}
 
@@ -151,8 +169,12 @@ public class BlockAllocator extends BlockContainer {
 		}
 	}   
     
+	int getOpposite(int i) {
+		return ForgeDirection.OPPOSITES[i];
+	}
+	
     @Override
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,	int l) {
+	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		// Top and Bottom
 		if (l == 1) {
 			return iconTopBottom;
@@ -197,7 +219,7 @@ public class BlockAllocator extends BlockContainer {
      * For the item view
      */
     @Override
-    public Icon getBlockTextureFromSideAndMetadata(int i, int m) {
+    public IIcon getIcon(int i, int m) {
     	switch (i) {
     	case 0: {
     		return iconTopBottom;
@@ -239,7 +261,7 @@ public class BlockAllocator extends BlockContainer {
     	if (!allowFiltering) {
     		return true;
     	}
-    	TileEntityAllocator tileentityallocator = (TileEntityAllocator)world.getBlockTileEntity(i, j, k);	
+    	TileEntityAllocator tileentityallocator = (TileEntityAllocator)world.getTileEntity(i, j, k);	
     	
     	// Item in slot 0 is the reference item
     	ItemStack filterItem = tileentityallocator.getStackInSlot(0);
@@ -253,14 +275,14 @@ public class BlockAllocator extends BlockContainer {
     		filterSubItems = ((!item.getItem().getHasSubtypes()) || (filterItem.getItemDamage() == item.getItemDamage()));
     		record = ((item.getItem() instanceof ItemRecord) && (filterItem.getItem() instanceof ItemRecord));
     	}
-    	return ((filterItem.itemID == item.getItem().itemID) && filterSubItems) || record;
+    	return ((filterItem.getItem() == item.getItem()) && filterSubItems) || record;
     }
     
     /**
      * Returns the container (IIventory) at position (i,j,k) if it exists.
      */
     protected IInventory containerAtPos(World world, int i, int j, int k) {
-    	TileEntity tile = world.getBlockTileEntity(i, j, k);
+    	TileEntity tile = world.getTileEntity(i, j, k);
     	if (!(tile instanceof IInventory)) {
     		return null;
     	}
@@ -277,8 +299,8 @@ public class BlockAllocator extends BlockContainer {
      * @return
      */
     protected boolean blockingCubeAtPos(World world, int i, int j, int k) {
-    	int blockID = world.getBlockId(i, j, k);
-    	boolean isOpaque = Block.opaqueCubeLookup[blockID];
+    	Block block = world.getBlock(i, j, k);
+    	boolean isOpaque = block.isOpaqueCube();
     	return isOpaque;
     }
 
@@ -297,7 +319,7 @@ public class BlockAllocator extends BlockContainer {
     		boolean canStack = false;
     		// Check if stacking is possible
 			if ((inventory.getStackInSlot(i) != null)
-					&& (inventory.getStackInSlot(i).itemID == item.itemID) &&
+					&& (inventory.getStackInSlot(i).getItem() == item.getItem()) &&
 					((!item.getItem().getHasSubtypes()) || (inventory.getStackInSlot(i).getItemDamage() == item.getItemDamage()))) {	
 					canStack = (inventory.getStackInSlot(i).stackSize <= (item.getMaxStackSize() - item.stackSize));
 			}
@@ -361,9 +383,10 @@ public class BlockAllocator extends BlockContainer {
 		BlockSourceImpl blockImpl = new BlockSourceImpl(world, i, j, k);
 		TileEntityAllocator allocator = (TileEntityAllocator) blockImpl.getBlockTileEntity();
 
+		
 		if (allocator != null) {
 			int meta = world.getBlockMetadata(i, j, k) & 7;
-			IInventory hopper = TileEntityHopper.func_96117_b(world,
+			IInventory hopper = TileEntityHopper.func_145893_b(world,
 					(double) (i + Facing.offsetsXForSide[meta]),
 					(double) (j + Facing.offsetsYForSide[meta]),
 					(double) (k + Facing.offsetsZForSide[meta]));
@@ -394,12 +417,12 @@ public class BlockAllocator extends BlockContainer {
     	
 		if (outputContainer == null) {
 			// Jukebox
-			if (world.getBlockId(i + dx, j, k + dz) == Block.jukebox.blockID) {
-				TileEntityRecordPlayer tJukeBox = (TileEntityRecordPlayer)world.getBlockTileEntity(i + dx, j, k + dz);
-				if ((item.getItem() instanceof ItemRecord) && (tJukeBox.func_96097_a() == null)) {					
+			if (world.getBlock(i + dx, j, k + dz) == Blocks.jukebox) {
+				TileEntityJukebox tJukeBox = (TileEntityJukebox)world.getTileEntity(i + dx, j, k + dz);
+				if ((item.getItem() instanceof ItemRecord) && (tJukeBox.func_145856_a() == null)) {					
 					ItemRecord record = (ItemRecord)item.getItem();
 					record.onItemUse(item, null, world, i + dx, j, k + dz, 0, 0, 0, 0);
-					((BlockJukeBox)Block.jukebox).insertRecord(world, i + dx, j, k + dz, item);
+					((BlockJukebox) Blocks.jukebox).func_149926_b(world, i + dx, j, k + dz, item);
 					return true;
 				} else {
 					return false;
@@ -423,7 +446,7 @@ public class BlockAllocator extends BlockContainer {
      * Returns the IIventory of a large chest, if there is one at (i, j, k)
      */
     private IInventory getDoubleChest(World world, int i, int j, int k) {
-    	TileEntity tile = world.getBlockTileEntity(i, j, k);
+    	TileEntity tile = world.getTileEntity(i, j, k);
 		if (!(tile instanceof TileEntityChest)) {
 			if (tile instanceof IInventory) {
 				return (IInventory)tile;
@@ -431,22 +454,23 @@ public class BlockAllocator extends BlockContainer {
 				return null;
 			}
 		}
-		int cblockID = world.getBlockId(i, j, k);
-    	IInventory chest1 = (IInventory)(world.getBlockTileEntity(i, j, k)); 
-    	if (world.getBlockId(i + 1, j, k) == cblockID) {
-    		IInventory chest2 = (IInventory)(world.getBlockTileEntity(i + 1, j, k));
+		
+		Block cblock = world.getBlock(i, j, k);
+    	IInventory chest1 = (IInventory)(world.getTileEntity(i, j, k)); 
+    	if (world.getBlock(i + 1, j, k) == cblock) {
+    		IInventory chest2 = (IInventory)(world.getTileEntity(i + 1, j, k));
         	return new InventoryLargeChest("", chest1, chest2);
     	}
-    	if (world.getBlockId(i - 1, j, k) == cblockID) {
-    		IInventory chest2 = (IInventory)(world.getBlockTileEntity(i - 1, j, k));
+    	if (world.getBlock(i - 1, j, k) == cblock) {
+    		IInventory chest2 = (IInventory)(world.getTileEntity(i - 1, j, k));
     		return new InventoryLargeChest("", chest2, chest1);
     	}    
-    	if (world.getBlockId(i, j, k + 1) == cblockID) {
-    		IInventory chest2 = (IInventory)(world.getBlockTileEntity(i, j, k + 1));
+    	if (world.getBlock(i, j, k + 1) == cblock) {
+    		IInventory chest2 = (IInventory)(world.getTileEntity(i, j, k + 1));
     		return new InventoryLargeChest("", chest1, chest2);
     	}    
-    	if (world.getBlockId(i, j, k - 1) == cblockID) {
-    		IInventory chest2 = (IInventory)(world.getBlockTileEntity(i, j, k - 1));
+    	if (world.getBlock(i, j, k - 1) == cblock) {
+    		IInventory chest2 = (IInventory)(world.getTileEntity(i, j, k - 1));
     		return new InventoryLargeChest("", chest2, chest1);
     	}        	
     	return chest1;
@@ -476,15 +500,15 @@ public class BlockAllocator extends BlockContainer {
     	// No Input-Container
     	if (inputContainer == null) {
 			// Jukebox
-			if (world.getBlockId(i - dx, j, k - dz) == Block.jukebox.blockID) {
-				TileEntityRecordPlayer tJukeBox = (TileEntityRecordPlayer)world.getBlockTileEntity(i - dx, j, k - dz);
+			if (world.getBlock(i - dx, j, k - dz) == Blocks.jukebox) {
+				TileEntityJukebox tJukeBox = (TileEntityJukebox) world.getTileEntity(i - dx, j, k - dz);
 				if (tJukeBox != null) {
-					if (passesFilter(world, i, j, k, tJukeBox.func_96097_a())) {
-						if (outputItem(world, i, j, k, dx, dz, tJukeBox.func_96097_a(), random)) {
+					if (passesFilter(world, i, j, k, tJukeBox.func_145856_a())) {
+						if (outputItem(world, i, j, k, dx, dz, tJukeBox.func_145856_a(), random)) {
 		                    world.playAuxSFX(1005, i - dx, j, k - dz, 0);
 		                    world.playRecord((String)null, i - dx, j, k - dz);							
-							tJukeBox.func_96098_a(null);
-							tJukeBox.onInventoryChanged();
+							tJukeBox.func_145857_a(null);
+							//tJukeBox.onInventoryChanged();
 							world.setBlockMetadataWithNotify(i - dx, j, k - dz, 0, 4);
 						}
 					}
@@ -531,16 +555,16 @@ public class BlockAllocator extends BlockContainer {
     }    
 
     @Override
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-        if(l > 0 && Block.blocksList[l].canProvidePower()) {
+    public void onNeighborBlockChange(World world, int i, int j, int k, Block b) {
+        if(b.canProvidePower()) {
             if (world.isBlockIndirectlyGettingPowered(i, j, k) || world.isBlockIndirectlyGettingPowered(i, j + 1, k)) {
-                world.scheduleBlockUpdate(i, j, k, blockID, tickRate(world));
+                world.scheduleBlockUpdate(i, j, k, this, tickRate(world));
             }
         }
     }    
     
     @Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
+    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
         int l = MathHelper.floor_double((double)((entityliving.rotationYaw * 4F) / 360F) + 0.5D) & 3;
         
 		if (l == 0) {
@@ -562,23 +586,19 @@ public class BlockAllocator extends BlockContainer {
 		if (!allowFiltering) {
 			return false;
 		}
-		TileEntityAllocator tileentityallocator = (TileEntityAllocator)world.getBlockTileEntity(i, j, k);
+		TileEntityAllocator tileentityallocator = (TileEntityAllocator) world.getTileEntity(i, j, k);
 		if (tileentityallocator != null) {
-			// Open GUI	
-			if (entityplayer instanceof EntityPlayerMP) {				
-				ModLoader.serverOpenWindow((EntityPlayerMP)entityplayer, new ContainerAllocator(entityplayer.inventory, tileentityallocator),  mod_Allocator.guiID, i, j, k);	
-				return true;
-			}
+			entityplayer.openGui(PfaeffsMod.instance, 0, world, i, j, k);
 		}
 		return false;
 	}  
     
     // Icons    
-    private Icon iconTopBottom;
-    private Icon iconLeft;
-    private Icon iconRight;
-    private Icon iconFront;
-    private Icon iconBack;       
+    private IIcon iconTopBottom;
+    private IIcon iconLeft;
+    private IIcon iconRight;
+    private IIcon iconFront;
+    private IIcon iconBack;       
     
     private final boolean allowFiltering;
     private final boolean subItemFiltering;
