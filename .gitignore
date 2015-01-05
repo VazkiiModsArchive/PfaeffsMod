@@ -1,14 +1,27 @@
-# Ignore OS cache files
-.DS_Store
-_MACSOX
+Thumbs.db
 
-# Package Files #
-*.jar
-*.war
-*.ear
+## gradle
+/.gradle
+/build
 
-# Some eclipse things #
-.project
-.classpath
-/bin
+## ForgeGradle
+/run
+
+## eclipse
 /.settings
+/.metadata
+/.classpath
+/.project
+/bin
+
+## intellij
+/out
+/.idea
+/atlassian-ide-plugin.xml
+
+## Private Stuffs
+/private.properties
+
+## Jars
+*.jar
+!/gradle/wrapper/gradle-wrapper.jar
