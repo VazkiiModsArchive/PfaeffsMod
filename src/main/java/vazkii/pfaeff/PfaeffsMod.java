@@ -7,10 +7,13 @@ import net.minecraft.item.ItemStack;
 import vazkii.pfaeff.block.BlockAllocator;
 import vazkii.pfaeff.block.BlockJumpPad;
 import vazkii.pfaeff.block.BlockLightSensor;
+import vazkii.pfaeff.tile.TileEntityAllocator;
+import vazkii.pfaeff.tile.TileEntityLightSensor;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = "pfaeffsmod", name = "Pfaeff's Mod", version="1.0")
@@ -26,6 +29,13 @@ public class PfaeffsMod {
 		allocator = new BlockAllocator(true, true, true);
 		jumpPad = new BlockJumpPad();
 		lightSensor = new BlockLightSensor();
+		
+		GameRegistry.registerBlock(allocator, "allocator");
+		GameRegistry.registerBlock(jumpPad, "jumpPad");
+		GameRegistry.registerBlock(lightSensor, "lightSensor");
+		
+		GameRegistry.registerTileEntity(TileEntityAllocator.class, "pfaeff:allocator");
+		GameRegistry.registerTileEntity(TileEntityLightSensor.class, "pfaeff:lightSensor");
 		
 		GameRegistry.addRecipe(new ItemStack(jumpPad, 4), 
 				"X", "#", 
@@ -43,6 +53,8 @@ public class PfaeffsMod {
 				'G', Items.slime_ball,
 				'Q', Items.quartz,
 				'#', Blocks.wooden_pressure_plate);
+		
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 	}
 	
 }

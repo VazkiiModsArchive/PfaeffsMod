@@ -2,6 +2,7 @@ package vazkii.pfaeff.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -28,7 +29,12 @@ public class BlockJumpPad extends Block {
 	@Override
     public boolean isOpaqueCube() {
         return false;
-    }	      
+    }	     
+	
+	@Override
+	public void registerBlockIcons(IIconRegister reg) {
+		blockIcon = reg.registerIcon("pfaeff:jumppad");
+	}
     
     /*
      * Only placeable on solid blocks

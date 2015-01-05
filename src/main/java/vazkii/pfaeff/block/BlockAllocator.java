@@ -59,12 +59,12 @@ public class BlockAllocator extends BlockContainer {
 	
 	@Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        this.blockIcon = iconRegister.registerIcon("pfaeff_side");
-        iconFront = iconRegister.registerIcon("allocator_front");
-        iconBack = iconRegister.registerIcon("allocator_back");
-        iconLeft = iconRegister.registerIcon("allocator_sidel");
-        iconRight = iconRegister.registerIcon("allocator_sider");
-        iconTopBottom = iconRegister.registerIcon("pfaeff_topbottom");        
+        this.blockIcon = iconRegister.registerIcon("pfaeff:pfaeff_side");
+        iconFront = iconRegister.registerIcon("pfaeff:allocator_front");
+        iconBack = iconRegister.registerIcon("pfaeff:allocator_back");
+        iconLeft = iconRegister.registerIcon("pfaeff:allocator_sidel");
+        iconRight = iconRegister.registerIcon("pfaeff:allocator_sider");
+        iconTopBottom = iconRegister.registerIcon("pfaeff:pfaeff_topbottom");        
     }	
     
     /**
@@ -589,6 +589,7 @@ public class BlockAllocator extends BlockContainer {
 		TileEntityAllocator tileentityallocator = (TileEntityAllocator) world.getTileEntity(i, j, k);
 		if (tileentityallocator != null) {
 			entityplayer.openGui(PfaeffsMod.instance, 0, world, i, j, k);
+			return true;
 		}
 		return false;
 	}  
