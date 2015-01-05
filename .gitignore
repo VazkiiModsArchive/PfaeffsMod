@@ -1,0 +1,14 @@
+# Ignore OS cache files
+.DS_Store
+_MACSOX
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Some eclipse things #
+.project
+.classpath
+/bin
+/.settings

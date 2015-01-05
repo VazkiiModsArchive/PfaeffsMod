@@ -1,0 +1,6 @@
+itemGroup.mechanics_mod=Mechanics
+tile.mechanics::allocator.name=Allocator
+tile.mechanics::lightsensor.name=Light Sensor
+tile.mechanics::cdkrotFan.name=Fan
+tile.mechanics::benchmark.name=Benchmark
+tile.mechanics::jumppad.name=Jump Pad
