@@ -8,11 +8,13 @@ import net.minecraft.item.ItemStack;
 import vazkii.pfaeff.tile.TileEntityAllocator;
 
 public class ContainerAllocator extends Container {
+
+	private TileEntityAllocator allocator;
 	
-	public ContainerAllocator(IInventory invPlayer, TileEntityAllocator tileentityallocator) {
-		allocator = tileentityallocator;
+	public ContainerAllocator(IInventory invPlayer, TileEntityAllocator tileEntityAllocator) {
+		allocator = tileEntityAllocator;
 		
-        addSlotToContainer(new Slot(tileentityallocator, 0, 80, 36));
+        addSlotToContainer(new Slot(tileEntityAllocator, 0, 80, 36));
         
 		for (int i = 0; i < 3; i++) {
 			for (int k = 0; k < 9; k++) {
@@ -21,7 +23,7 @@ public class ContainerAllocator extends Container {
 		}
 		for (int j = 0; j < 9; j++) {
 			addSlotToContainer(new Slot(invPlayer, j, 8 + j * 18, 142));
-		}	
+		}
 	}
 	
 	@Override
@@ -30,7 +32,7 @@ public class ContainerAllocator extends Container {
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par1) {		
+	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par1) {
 		ItemStack itemstack = null;
 		Slot slot = (Slot) inventorySlots.get(par1);
 
@@ -65,6 +67,4 @@ public class ContainerAllocator extends Container {
 
 		return itemstack;
 	}
-	
-	private TileEntityAllocator allocator;
 }
