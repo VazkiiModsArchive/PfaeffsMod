@@ -9,6 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityAllocator extends TileEntity implements IInventory {
 
+	private ItemStack allocatorFilterItem;
+
 	@Override
 	public int getSizeInventory() {
 		return 1;
@@ -17,7 +19,6 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 	@Override
 	public ItemStack getStackInSlot(int i) {
 		if (i == 0) {
-			//System.out.println("getStackInSlot(0) = " + allocatorFilterItem + " | pos: " + xCoord + "; " + yCoord + "; " + zCoord + " | remote? " + this.worldObj.isRemote);
 			return allocatorFilterItem;
 		}
 		return null;
@@ -32,13 +33,13 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 			if (allocatorFilterItem.stackSize <= j) {
                 ItemStack itemstack = allocatorFilterItem;
                 allocatorFilterItem = null;
-                return itemstack;				
+                return itemstack;
 			}
             ItemStack itemstack = allocatorFilterItem.splitStack(j);
             if(allocatorFilterItem.stackSize == 0) {
             	allocatorFilterItem = null;
             }
-            return itemstack;			
+            return itemstack;
 		}
 		return null;
 	}
@@ -88,7 +89,7 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {	
-		super.writeToNBT(nbttagcompound);		
+		super.writeToNBT(nbttagcompound);
 		NBTTagList items = new NBTTagList();
 		if (allocatorFilterItem != null) {
 			NBTTagCompound item = new NBTTagCompound();
@@ -106,9 +107,7 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 		} else {
 			return null;
 		}
-	}	
-	
-	private ItemStack allocatorFilterItem;
+	}
 
 	@Override
 	public boolean hasCustomInventoryName() {
@@ -116,10 +115,10 @@ public class TileEntityAllocator extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public void openInventory() { }
+	public void openInventory() { } // TODO: Should something be here?
 
 	@Override
-	public void closeInventory() { }
+	public void closeInventory() { } // TODO: Should something be here?
 
 	@Override
 	public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {

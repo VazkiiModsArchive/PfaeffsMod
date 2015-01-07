@@ -18,6 +18,9 @@ Thumbs.db
 /out
 /.idea
 /atlassian-ide-plugin.xml
+/*.iml
+/*.ipr
+/*.iws
 
 ## Private Stuffs
 /private.properties

@@ -12,16 +12,17 @@ public class GuiAllocator extends GuiContainer {
 	
 	private static final ResourceLocation resource = new ResourceLocation("pfaeff", "textures/gui/allocator.png");
 
-    public GuiAllocator(InventoryPlayer invPlayer, TileEntityAllocator tileentityallocator) {
-        super(new ContainerAllocator(invPlayer, tileentityallocator));
-        allocatorInv = tileentityallocator;
-    }	
+    private TileEntityAllocator allocatorInv; // TODO: Is this every used?
+
+    public GuiAllocator(InventoryPlayer invPlayer, TileEntityAllocator tileEntityAllocator) {
+        super(new ContainerAllocator(invPlayer, tileEntityAllocator));
+        allocatorInv = tileEntityAllocator;
+    }
 	
-    protected void drawGuiContainerForegroundLayer()
-    {
+    protected void drawGuiContainerForegroundLayer() {
         fontRendererObj.drawString("Allocator", 60, 6, 0x404040);
         fontRendererObj.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
-    }    
+    }
     
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
@@ -31,6 +32,4 @@ public class GuiAllocator extends GuiContainer {
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j1, k, 0, 0, xSize, ySize);
 	}
-	
-	private TileEntityAllocator allocatorInv;
 }

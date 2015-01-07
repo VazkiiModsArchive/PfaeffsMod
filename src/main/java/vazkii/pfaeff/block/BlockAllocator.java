@@ -40,6 +40,18 @@ import vazkii.pfaeff.tile.TileEntityAllocator;
 
 
 public class BlockAllocator extends BlockContainer {
+
+	// Icons
+	private IIcon iconTopBottom;
+	private IIcon iconLeft;
+	private IIcon iconRight;
+	private IIcon iconFront;
+	private IIcon iconBack;
+
+	// Settings
+	private final boolean allowFiltering;
+	private final boolean subItemFiltering;
+	private final boolean newTextures;
 	
 	private final IBehaviorDispenseItem dispenseBehaviour = new BehaviorDefaultDispenseItem();
 	/**
@@ -64,21 +76,21 @@ public class BlockAllocator extends BlockContainer {
         iconBack = iconRegister.registerIcon("pfaeff:allocator_back");
         iconLeft = iconRegister.registerIcon("pfaeff:allocator_sidel");
         iconRight = iconRegister.registerIcon("pfaeff:allocator_sider");
-        iconTopBottom = iconRegister.registerIcon("pfaeff:pfaeff_topbottom");        
-    }	
+        iconTopBottom = iconRegister.registerIcon("pfaeff:pfaeff_topbottom");
+    }
     
     /**
      * Returns orientation along the x-axis (-1, 0, 1)
      */
     private int getDirectionX(World world, int i, int j, int k) {
-    	int m = world.getBlockMetadata(i, j, k); 	
+    	int m = world.getBlockMetadata(i, j, k);
     	int dx = 0;
     	if (m == 4) {
     		dx = -1;
     	}
     	if (m == 5) {
     		dx = 1;
-    	}       	
+    	}
     	return dx;
     }
     
@@ -86,21 +98,21 @@ public class BlockAllocator extends BlockContainer {
      * Returns orientation along the z-axis (-1, 0, 1)
      */  
     private int getDirectionZ(World world, int i, int j, int k) {
-    	int m = world.getBlockMetadata(i, j, k); 	
+    	int m = world.getBlockMetadata(i, j, k);
     	int dz = 0;
     	if (m == 2) {
     		dz = -1;
     	}
     	if (m == 3) {
     		dz = 1;
-    	}  	
+    	}
     	return dz;
-    }      	
+    }
 	
 	@Override
 	public TileEntity createNewTileEntity(World var1, int meta) {
 		return new TileEntityAllocator();
-	}	
+	}
 	
 	@Override
 	public void breakBlock(World world, int i, int j, int k, Block block, int meta) {
@@ -128,12 +140,12 @@ public class BlockAllocator extends BlockContainer {
 	@Override
     public int quantityDropped(Random random) {
         return 1;
-    }         
+    }
     
 	@Override
     public int tickRate(World world) {
         return 4;
-    }    
+    }
     
 	@Override
     public void onBlockAdded(World world, int i, int j, int k) {
@@ -235,17 +247,17 @@ public class BlockAllocator extends BlockContainer {
     	}
     	case 4: {
     		if (newTextures) {
-    			return iconRight;	
+    			return iconRight;
     		}
     	}
     	case 5: {
     		if (newTextures) {
-    			return iconLeft;	
+    			return iconLeft;
     		}
     	}
     	}
     	return this.blockIcon;
-    }    
+    }
     
     /**
      * Returns true, if the item is allowed to pass
@@ -261,17 +273,17 @@ public class BlockAllocator extends BlockContainer {
     	if (!allowFiltering) {
     		return true;
     	}
-    	TileEntityAllocator tileentityallocator = (TileEntityAllocator)world.getTileEntity(i, j, k);	
+    	TileEntityAllocator tileentityallocator = (TileEntityAllocator)world.getTileEntity(i, j, k);
     	
     	// Item in slot 0 is the reference item
     	ItemStack filterItem = tileentityallocator.getStackInSlot(0);
     	
     	if (filterItem == null) {
     		return true;
-    	}    	
+    	}
     	boolean filterSubItems = true;
     	boolean record = false;
-    	if (subItemFiltering) {    		
+    	if (subItemFiltering) {
     		filterSubItems = ((!item.getItem().getHasSubtypes()) || (filterItem.getItemDamage() == item.getItemDamage()));
     		record = ((item.getItem() instanceof ItemRecord) && (filterItem.getItem() instanceof ItemRecord));
     	}
@@ -287,7 +299,7 @@ public class BlockAllocator extends BlockContainer {
     		return null;
     	}
     	return getDoubleChest(world, i, j, k);
-    } 
+    }
     
     /**
      * Checks if there is a "blocking" cube at (i,j,k)
@@ -314,13 +326,13 @@ public class BlockAllocator extends BlockContainer {
     	// because it doesn't make sense to have items being put in the last slot
     	if (inventory instanceof TileEntityFurnace) {
     		inventorySize--;
-    	}    	
+    	}
     	for (int i = 0; i < inventorySize; i++) {
     		boolean canStack = false;
     		// Check if stacking is possible
 			if ((inventory.getStackInSlot(i) != null)
 					&& (inventory.getStackInSlot(i).getItem() == item.getItem()) &&
-					((!item.getItem().getHasSubtypes()) || (inventory.getStackInSlot(i).getItemDamage() == item.getItemDamage()))) {	
+					((!item.getItem().getHasSubtypes()) || (inventory.getStackInSlot(i).getItemDamage() == item.getItemDamage()))) {
 					canStack = (inventory.getStackInSlot(i).stackSize <= (item.getMaxStackSize() - item.stackSize));
 			}
     		if ((inventory.getStackInSlot(i) == null) || canStack) {
@@ -328,7 +340,7 @@ public class BlockAllocator extends BlockContainer {
     		}
     	}
     	return -1;
-    }    
+    }
     
     /**
      * Returns a random item from the container, using the same rule as the dispenser
@@ -346,7 +358,7 @@ public class BlockAllocator extends BlockContainer {
 		// because it doesn't make sense to take something out of the first slots as they are inputs
 		if (inventory instanceof TileEntityFurnace) {
 			startAt = 2;
-		}		
+		}
 		for (int k = startAt; k < inventory.getSizeInventory(); k++) {
 			if ((inventory.getStackInSlot(k) != null) && passesFilter(world, i1, j1, k1, inventory.getStackInSlot(k)) && (rand.nextInt(j) == 0)) {
 				i = k;
@@ -367,7 +379,7 @@ public class BlockAllocator extends BlockContainer {
     		ItemStack stack = inventory.getStackInSlot(index);
     		if (stack != null) {
     			// Item already there, increase stacksize
-    			stack.stackSize += item.stackSize;					// TODO: when stack is full, search for new position
+    			stack.stackSize += item.stackSize; // TODO: when stack is full, search for new position
     			inventory.setInventorySlotContents(index, stack);
     		} else {
     			// Add a new item
@@ -402,7 +414,7 @@ public class BlockAllocator extends BlockContainer {
      * Handles the item output. Returns true, if item was successfully put out.
      */
     private boolean outputItem(World world, int i, int j, int k, int dx, int dz, ItemStack item, Random random) {
-    	IInventory outputContainer = containerAtPos(world, i + dx, j, k + dz);    	
+    	IInventory outputContainer = containerAtPos(world, i + dx, j, k + dz);
     	
     	if (outputContainer == null) {
     		// Search for storage minecarts and such
@@ -410,7 +422,7 @@ public class BlockAllocator extends BlockContainer {
 			if (entities.size() > 0) {
 				// Prevent the allocator from using non-storage minecarts
 				if (!((entities.get(0) instanceof  EntityMinecart) && (entities.get(0)) instanceof IInventory)) {
-					outputContainer = (IInventory)(entities.get(0));   
+					outputContainer = (IInventory)(entities.get(0));
 				}
 			}
     	}
@@ -419,7 +431,7 @@ public class BlockAllocator extends BlockContainer {
 			// Jukebox
 			if (world.getBlock(i + dx, j, k + dz) == Blocks.jukebox) {
 				TileEntityJukebox tJukeBox = (TileEntityJukebox)world.getTileEntity(i + dx, j, k + dz);
-				if ((item.getItem() instanceof ItemRecord) && (tJukeBox.func_145856_a() == null)) {					
+				if ((item.getItem() instanceof ItemRecord) && (tJukeBox.func_145856_a() == null)) {
 					ItemRecord record = (ItemRecord)item.getItem();
 					record.onItemUse(item, null, world, i + dx, j, k + dz, 0, 0, 0, 0);
 					((BlockJukebox) Blocks.jukebox).func_149926_b(world, i + dx, j, k + dz, item);
@@ -427,7 +439,7 @@ public class BlockAllocator extends BlockContainer {
 				} else {
 					return false;
 				}
-			}			
+			}
 			if ((!blockingCubeAtPos(world, i + dx, j, k + dz))) {
 				dispense(world, i, j, k, item);
 				return true;
@@ -438,9 +450,9 @@ public class BlockAllocator extends BlockContainer {
 				putItemInContainer(outputContainer, item, index);
 				return true;
 			}
-		}    	
+		}
 		return false;
-    }        
+    }
     
     /**
      * Returns the IIventory of a large chest, if there is one at (i, j, k)
@@ -464,31 +476,31 @@ public class BlockAllocator extends BlockContainer {
     	if (world.getBlock(i - 1, j, k) == cblock) {
     		IInventory chest2 = (IInventory)(world.getTileEntity(i - 1, j, k));
     		return new InventoryLargeChest("", chest2, chest1);
-    	}    
+    	}
     	if (world.getBlock(i, j, k + 1) == cblock) {
     		IInventory chest2 = (IInventory)(world.getTileEntity(i, j, k + 1));
     		return new InventoryLargeChest("", chest1, chest2);
-    	}    
+    	}
     	if (world.getBlock(i, j, k - 1) == cblock) {
     		IInventory chest2 = (IInventory)(world.getTileEntity(i, j, k - 1));
     		return new InventoryLargeChest("", chest2, chest1);
-    	}        	
+    	}
     	return chest1;
     }
     
     /**
      * Handles all the item input/output
      */
-    private void allocateItems(World world, int i, int j, int k, Random random) {    	
+    private void allocateItems(World world, int i, int j, int k, Random random) {
     	int dx = getDirectionX(world, i, j, k);
-    	int dz = getDirectionZ(world, i, j, k);	
-    	   	
-    	IInventory inputContainer = containerAtPos(world, i - dx, j, k - dz);     
-    	
+    	int dz = getDirectionZ(world, i, j, k);
+
+    	IInventory inputContainer = containerAtPos(world, i - dx, j, k - dz);
+
     	List entities = null;
-    	
+
     	if (inputContainer == null) {
-    		entities = world.getEntitiesWithinAABB(IInventory.class, AxisAlignedBB.getBoundingBox((double)(i - dx), (double)j, (double)(k - dz), (double)(i - dx + 1), (double)(j + 1), (float)(k - dz + 1)));		
+    		entities = world.getEntitiesWithinAABB(IInventory.class, AxisAlignedBB.getBoundingBox((double)(i - dx), (double)j, (double)(k - dz), (double)(i - dx + 1), (double)(j + 1), (float)(k - dz + 1)));
     		// Search for storage minecarts and such
 			if (entities.size() > 0) {
 				if (!((entities.get(0) instanceof  EntityMinecart) && (entities.get(0)) instanceof IInventory)) {
@@ -496,7 +508,7 @@ public class BlockAllocator extends BlockContainer {
 				}
 			}
     	}
-    	
+
     	// No Input-Container
     	if (inputContainer == null) {
 			// Jukebox
@@ -506,53 +518,53 @@ public class BlockAllocator extends BlockContainer {
 					if (passesFilter(world, i, j, k, tJukeBox.func_145856_a())) {
 						if (outputItem(world, i, j, k, dx, dz, tJukeBox.func_145856_a(), random)) {
 		                    world.playAuxSFX(1005, i - dx, j, k - dz, 0);
-		                    world.playRecord((String)null, i - dx, j, k - dz);							
+		                    world.playRecord((String)null, i - dx, j, k - dz);
 							tJukeBox.func_145857_a(null);
 							//tJukeBox.onInventoryChanged();
 							world.setBlockMetadataWithNotify(i - dx, j, k - dz, 0, 4);
 						}
 					}
 				}
-			} else {    		
-	    		entities = world.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getBoundingBox((double)(i - dx), (double)j, (double)(k - dz), (double)(i - dx + 1), (double)(j + 1), (float)(k - dz + 1)));		
+			} else {
+	    		entities = world.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getBoundingBox((double)(i - dx), (double)j, (double)(k - dz), (double)(i - dx + 1), (double)(j + 1), (float)(k - dz + 1)));
 
 	    		// Find all EntityItems that would pass
 	    		ArrayList<EntityItem> items = new ArrayList<EntityItem>();
 	    		for (int l = 0; l < entities.size(); l++) {
 	        		if (entities.get(l) instanceof EntityItem) {
-	        			EntityItem item = (EntityItem)entities.get(l);  
-	        			if ((!item.isDead) && (passesFilter(world, i, j, k, item.getEntityItem()))) {
-	        				items.add(item);
-	        			}
-	        		}	        		
+						EntityItem item = (EntityItem) entities.get(l);
+						if ((!item.isDead) && (passesFilter(world, i, j, k, item.getEntityItem()))) {
+							items.add(item);
+						}
+					}
 	        	}
-	    		
+
 	    		// Suck in a random one
 	    		if (items.size() > 0) {
 		    		int index = world.rand.nextInt(items.size());
 					if (outputItem(world, i, j, k, dx, dz, items.get(index).getEntityItem(), random)) {
 						items.get(index).setDead();
-					}	    		
+					}
 	    		}
 			}
         // Input-Container
     	} else {
-    		int itemIndex = getRandomItemFromContainer(inputContainer, random, world, i, j, k);	
+    		int itemIndex = getRandomItemFromContainer(inputContainer, random, world, i, j, k);
     		if (itemIndex >= 0) {
     			ItemStack item = inputContainer.getStackInSlot(itemIndex);
     			if (outputItem(world, i, j, k, dx, dz, item, random)) {
-    				inputContainer.decrStackSize(itemIndex, item.stackSize); 
+    				inputContainer.decrStackSize(itemIndex, item.stackSize);
     			}
     		}
-    	}    	
+    	}
     }
 
     @Override
     public void updateTick(World world, int i, int j, int k, Random random) {
         if(world.isBlockIndirectlyGettingPowered(i, j, k) || world.isBlockIndirectlyGettingPowered(i, j + 1, k)) {
-        	allocateItems(world, i, j, k, random);		        	
+        	allocateItems(world, i, j, k, random);
         }
-    }    
+    }
 
     @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, Block b) {
@@ -561,7 +573,7 @@ public class BlockAllocator extends BlockContainer {
                 world.scheduleBlockUpdate(i, j, k, this, tickRate(world));
             }
         }
-    }    
+    }
     
     @Override
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
@@ -579,7 +591,7 @@ public class BlockAllocator extends BlockContainer {
 		if (l == 3) {
 			world.setBlockMetadataWithNotify(i, j, k, 4, 4);
 		}
-    }      
+    }
     
     @Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
@@ -592,18 +604,5 @@ public class BlockAllocator extends BlockContainer {
 			return true;
 		}
 		return false;
-	}  
-    
-    // Icons    
-    private IIcon iconTopBottom;
-    private IIcon iconLeft;
-    private IIcon iconRight;
-    private IIcon iconFront;
-    private IIcon iconBack;       
-    
-    private final boolean allowFiltering;
-    private final boolean subItemFiltering;
-    private final boolean newTextures;
-    
-    private final IBehaviorDispenseItem dispenserBehaviour = new BehaviorDefaultDispenseItem();
+	}
 }

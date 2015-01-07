@@ -23,13 +23,13 @@ public class BlockLightSensor extends BlockContainer {
 	    @Override
 	    public void registerBlockIcons(IIconRegister par1IconRegister) {
 	        blockIcon = par1IconRegister.registerIcon("pfaeff:lightsensor_top");
-	    }	    
+	    }
 	    
-	    public void updateSensorOutput(World world, int i, int j, int k)  {
-	    	int lightValue = world.getBlockLightValue(i, j, k);	    	
-	    	int redStoneValue = Math.min(Math.max(lightValue, 0), 15);
-	    	world.setBlockMetadataWithNotify(i, j, k, redStoneValue, 1 | 2);
-	    }	    
+	    public void updateSensorOutput(World world, int i, int j, int k) {
+			int lightValue = world.getBlockLightValue(i, j, k);
+			int redStoneValue = Math.min(Math.max(lightValue, 0), 15);
+			world.setBlockMetadataWithNotify(i, j, k, redStoneValue, 1 | 2);
+		}
 	    
 	    @Override
 	    public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int i, int j, int k) {
