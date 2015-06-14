@@ -55,6 +55,8 @@ public class BlockAllocator extends BlockContainer {
 		
 		this.setCreativeTab(CreativeTabs.tabRedstone);
 		setBlockName("allocator");
+		setHardness(3.5F);
+		setStepSound(soundTypePiston);
 	}
 	
 	@Override

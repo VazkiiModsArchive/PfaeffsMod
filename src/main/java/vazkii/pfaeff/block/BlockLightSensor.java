@@ -18,6 +18,8 @@ public class BlockLightSensor extends BlockContainer {
 	        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.375F, 1.0F);
 	        this.setCreativeTab(CreativeTabs.tabRedstone);
 	        setBlockName("lightSensor");
+	        setHardness(0.2F);
+	        setStepSound(soundTypeWood);
 	    }
 	    
 	    @Override

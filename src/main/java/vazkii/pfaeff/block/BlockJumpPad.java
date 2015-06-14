@@ -21,6 +21,8 @@ public class BlockJumpPad extends Block {
 		
 		this.setCreativeTab(CreativeTabs.tabTransport);
 		setBlockName("jumpPad");
+		setHardness(0.6F);
+		setStepSound(soundTypeGrass);
 	}
 	
 	/*
