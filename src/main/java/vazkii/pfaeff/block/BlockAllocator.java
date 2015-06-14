@@ -35,13 +35,14 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import vazkii.pfaeff.BehaviourDispenseStack;
 import vazkii.pfaeff.PfaeffsMod;
 import vazkii.pfaeff.tile.TileEntityAllocator;
 
 
 public class BlockAllocator extends BlockContainer {
 	
-	private final IBehaviorDispenseItem dispenseBehaviour = new BehaviorDefaultDispenseItem();
+	private final IBehaviorDispenseItem dispenseBehaviour = new BehaviourDispenseStack();
 	/**
 	 * Constructor
 	 * 
@@ -384,7 +385,6 @@ public class BlockAllocator extends BlockContainer {
 	protected void dispense(World world, int i, int j, int k, ItemStack item) {
 		BlockSourceImpl blockImpl = new BlockSourceImpl(world, i, j, k);
 		TileEntityAllocator allocator = (TileEntityAllocator) blockImpl.getBlockTileEntity();
-
 		
 		if (allocator != null) {
 			int meta = world.getBlockMetadata(i, j, k) & 7;
@@ -606,6 +606,4 @@ public class BlockAllocator extends BlockContainer {
     private final boolean allowFiltering;
     private final boolean subItemFiltering;
     private final boolean newTextures;
-    
-    private final IBehaviorDispenseItem dispenserBehaviour = new BehaviorDefaultDispenseItem();
 }
